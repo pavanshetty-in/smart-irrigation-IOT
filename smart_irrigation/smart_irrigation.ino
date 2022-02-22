@@ -7,9 +7,9 @@ SoftwareSerial myserial(10,11);                //rx 10, tx 11
 #define soil_s A0
 #define DHTTYPE DHT11                        // DHT 11
 float soil_moist,temp,humidity; 
-int motorstatus;
+int motorstatus,count=0;
 char deviceID[10] = "ROYAL256";
-StaticJsonDocument<200> doc;  
+//StaticJsonDocument<200> doc;  
 
 DHT dht(DHTPIN, DHTTYPE);
 
@@ -47,7 +47,12 @@ void loop() {
     Serial.print(temp);
     Serial.println("C ");
     Serial.println("******");
-    send_wethardata();
+    if(count>=10)
+    {
+      send_wethardata();
+      count=0;
+    }
+    count+=1;
 
   delay(60000); 
 }
@@ -96,39 +101,39 @@ int send_wethardata()
   doc["soilmoist"] = soil_moist;
   doc["motorstatus"] = motorstatus;
 
-  serializeJson(doc, Serial);
+//  serializeJson(doc, Serial);
   serializeJsonPretty(doc, Serial);
   String sendtoserver;
   serializeJsonPretty(doc, sendtoserver);
-  delay(4000);
+  delay(2000);
 
   myserial.println("AT+HTTPPARA=\"URL\",\"http://smart-irrigation-iot.herokuapp.com/se\""); //Server address
-  delay(4000);
+  delay(2000);
   ShowSerialData();
   
   myserial.println("AT+HTTPPARA=\"CONTENT\",\"application/json\"");
-  delay(4000);
+  delay(2000);
   ShowSerialData();
 
   myserial.println("AT+HTTPDATA=" + String(sendtoserver.length()) + ",100000");
   Serial.println(sendtoserver);
-  delay(6000);
+  delay(3000);
   ShowSerialData();
 
   myserial.println(sendtoserver);
-  delay(6000);
+  delay(3000);
   ShowSerialData;
 
   myserial.println("AT+HTTPACTION=1");
-  delay(6000);
+  delay(3000);
   ShowSerialData();
 
   myserial.println("AT+HTTPREAD");
-  delay(6000);
+  delay(3000);
   ShowSerialData();
 
   myserial.println("AT+HTTPTERM");
-  delay(10000);
+  delay(4000);
   ShowSerialData;
   
 }
