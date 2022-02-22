@@ -107,7 +107,7 @@ int send_wethardata()
   serializeJsonPretty(doc, sendtoserver);
   delay(2000);
 
-  myserial.println("AT+HTTPPARA=\"URL\",\"http://smart-irrigation-iot.herokuapp.com/se\""); //Server address
+  myserial.println("AT+HTTPPARA=\"URL\",\"https://rnsit-mca-miniproject.herokuapp.com/se\""); //Server address
   delay(2000);
   ShowSerialData();
   
